@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText input_number;
     private Handler h;
     private int number;
-    private Bundle bundle;
+    private Message message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +49,13 @@ public class MainActivity extends AppCompatActivity {
         btn = findViewById(R.id.button);
         out_text = findViewById(R.id.textView);
         input_number = findViewById(R.id.editTextTextPersonName);
+        Message message = new Message();
         h = new Handler(Looper.getMainLooper()) {
             @SuppressLint("SetTextI18n")
             @Override
             public void handleMessage(@NonNull Message msg) {
                 if (msg.what == 200) {
-                    out_text.setText((Integer) bundle.get("key"));
+                    out_text.setText(message.obj.toString());
                 }
                 else {
                     out_text.setText("Something wrong. Sorry.");
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                             connection.setConnectTimeout(10000);
                             connection.connect();
                             int status = connection.getResponseCode();
-                            Log.d("STATS", Integer.toString(status));
+                            Log.d("RRR", Integer.toString(status));
                             Log.d("url", url);
 
                             ArrayList<String> lines = new ArrayList<>();
@@ -110,9 +111,7 @@ public class MainActivity extends AppCompatActivity {
                             Result result = gson.fromJson(stringBuilder.toString(), Result.class);
 
                             h.sendEmptyMessage(status);
-                            Message message = new Message();
-                            bundle.putString("key", result.getText());
-                            message.setData(bundle);
+                            message.obj = result;
                         }
                         catch (IOException e) {
                             e.printStackTrace();
